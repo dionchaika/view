@@ -71,14 +71,17 @@ class View
      */
     public function render(string $viewName, array $viewParameters = []): string
     {
-        $compiledViewPath =
-            $this->compiledViewsDir.\DIRECTORY_SEPARATOR.$viewName.'.php';
+        $compiledViewPath = $this->compiledViewsDir
+            .\DIRECTORY_SEPARATOR
+            .$viewName
+            .'.compiled.php';
 
         if (file_exists($compiledViewPath)) {
             $viewPath = $compiledViewPath;
         } else {
             $viewPath = $this->viewsDir
-                .\DIRECTORY_SEPARATOR.$this->normalizeName($viewName);
+                .\DIRECTORY_SEPARATOR
+                .$this->normalizeViewName($viewName);
 
             $viewFound = false;
             foreach (['.php', '.html'] as $viewExt) {
@@ -158,14 +161,14 @@ class View
     }
 
     /**
-     * Normalize view name.
+     * Normalize a view name.
      *
-     * @param string $name
+     * @param string $viewName
      * @return string
      */
-    protected function normalizeName(string $name): string
+    protected function normalizeViewName(string $viewName): string
     {
-        return str_replace('.', \DIRECTORY_SEPARATOR, $name);
+        return str_replace('.', \DIRECTORY_SEPARATOR, $viewName);
     }
 
     /**

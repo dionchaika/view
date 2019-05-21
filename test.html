@@ -1,14 +1,13 @@
-@php
+@if 1 === $page
 
-foreach ($users as $user) {
-    echo $user['name'];
-}
-
-@endphp
-
-<div class="user">
     <p>{{ $user['name'] }}</p>
-    <p>{{ $user['email'] }}</p>
-</div>
 
-@view test.footer
+@elseif 2 === $page
+
+    <p>{{ $user['email'] }}</p>
+
+@else
+
+    <p>{{ $user['phones'] }}</p>
+
+@endif

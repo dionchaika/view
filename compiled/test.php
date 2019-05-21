@@ -1,10 +1,13 @@
-<?php foreach ($users as $user) {
-    echo $user['name'];
-} ?>
+<?php if (1 === $page) { ?>
 
-<div class="user">
     <p><?php echo $user['name']; ?></p>
-    <p><?php echo $user['email']; ?></p>
-</div>
 
-<?php echo $this->render('test.footer'); ?>
+<?php } else if (2 === $page) { ?>
+
+    <p><?php echo $user['email']; ?></p>
+
+<?php } else { ?>
+
+    <p><?php echo $user['phones']; ?></p>
+
+<?php } ?>

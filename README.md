@@ -25,3 +25,14 @@ $view = new View(
     '/optional/path/to/compiled/views'
 );
 ```
+
+## Basic usage
+```php
+
+echo $view->render('home.index');
+
+//
+// Passing parameters to the view:
+//
+echo $view->render('home.index', ['lang' => 'en', 'title' => 'Home Page']);
+```

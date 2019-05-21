@@ -3,3 +3,5 @@ index.*
 *.lock
 
 vendor/
+
+examples/

@@ -61,7 +61,7 @@ class View
     }
 
     /**
-     * Render view into HTML.
+     * Render view into the HTML.
      *
      * @param string  $viewName
      * @param mixed[] $viewParameters
@@ -71,11 +71,11 @@ class View
      */
     public function render(string $viewName, array $viewParameters = []): string
     {
-        
+        //
     }
 
     /**
-     * Compile view into PHP.
+     * Compile view into the PHP.
      *
      * @param string $viewPath
      * @return string
@@ -91,14 +91,14 @@ class View
         }
 
         $view = $this->compilePlaceholders($view);
-        $view = $this->compilePhpDirective($view);
-        $view = $this->compileViewDirective($view);
+        $view = $this->compilePhpDirectives($view);
+        $view = $this->compileViewDirectives($view);
 
         return $view;
     }
 
     /**
-     * Compile view placeholders.
+     * Compile placeholders.
      *
      * @param string $view
      * @return string
@@ -109,23 +109,23 @@ class View
     }
 
     /**
-     * Compile @php directive.
+     * Compile @php directives.
      *
      * @param string $view
      * @return string
      */
-    protected function compilePhpDirective(string $view): string
+    protected function compilePhpDirectives(string $view): string
     {
         return preg_replace('/\@php([^@]+)\@end/', "<?php\n$1\n?>", $view);
     }
 
     /**
-     * Compile @view directive.
+     * Compile @view directives.
      *
      * @param string $view
      * @return string
      */
-    protected function compileViewDirective(string $view): string
+    protected function compileViewDirectives(string $view): string
     {
         return preg_replace('/\@view +([\w.]+)/', "<?=\$this->render('$1')?>", $view);
     }

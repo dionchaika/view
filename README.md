@@ -44,3 +44,18 @@ echo $view->render('home.index');
 //
 echo $view->render('home.index', ['lang' => 'en', 'title' => 'Home Page']);
 ```
+
+2. Using comments:
+```html
+### This comment
+    will not be rendered into the HTML ###
+<h1>Welcome!</h1>
+```
+
+3. Using placeholders:
+```html
+<div class="user">
+    <div class="name">{{ $user['name'] }}</div>
+    <div class="email">{{ $user['email'] }}</div>
+</div>
+```

@@ -17,6 +17,7 @@ require_once 'vendor/autoload.php';
 
 ## Configuration
 ```php
+<?php
 
 use Dionchaika\View\View;
 
@@ -29,11 +30,12 @@ $view = new View(
 ## Basic usage
 1. Rendering views:
 ```php
+<?php
 
 //
 // Will render a view file
-// /path/to/views/home/index.php
-// or /path/to/views/home/index.html
+// with name /path/to/views/home/index.php
+// or with name /path/to/views/home/index.html:
 //
 echo $view->render('home.index');
 

@@ -1,0 +1,14 @@
+@php
+
+foreach ($users as $user) {
+    echo $user['name'];
+}
+
+@endphp
+
+<div class="user">
+    <p>{{ $user['name'] }}</p>
+    <p>{{ $user['email'] }}</p>
+</div>
+
+@view test.footer

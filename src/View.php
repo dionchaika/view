@@ -105,7 +105,10 @@ class View
      */
     protected function compilePlaceholders(string $view): string
     {
-        return preg_replace('/\{\{\s*([^\s]+)\s*\}\}/', "<?=$1?>", $view);
+        return preg_replace_callback('/\{\{([^}]+)\}\}/', function ($matches) {
+            $data = trim($matches[1]);
+            return "<?php echo {$data}; ?>";
+        }, $view);
     }
 
     /**
@@ -116,7 +119,10 @@ class View
      */
     protected function compilePhpDirectives(string $view): string
     {
-        return preg_replace('/\@php([^@]+)\@end/', "<?php\n$1\n?>", $view);
+        return preg_replace_callback('/\@php([^@]+)\@endphp/', function ($matches) {
+            $data = trim($matches[1]);
+            return "<?php {$data} ?>";
+        }, $view);
     }
 
     /**
@@ -127,6 +133,8 @@ class View
      */
     protected function compileViewDirectives(string $view): string
     {
-        return preg_replace('/\@view +([\w.]+)/', "<?=\$this->render('$1')?>", $view);
+        return preg_replace_callback('/\@view ([\w.]+)/', function ($matches) {
+            return "<?php echo \$this->render('{$matches[1]}'); ?>";
+        }, $view);
     }
 }

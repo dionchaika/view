@@ -71,7 +71,49 @@ class View
      */
     public function render(string $viewName, array $viewParameters = []): string
     {
-        //
+        $compiledViewPath =
+            $this->compiledViewsDir.\DIRECTORY_SEPARATOR.$viewName.'.php';
+
+        if (file_exists($compiledViewPath)) {
+            $viewPath = $compiledViewPath;
+        } else {
+            $viewPath = $this->viewsDir
+                .\DIRECTORY_SEPARATOR.$this->normalizeName($viewName);
+
+            $viewFound = false;
+            foreach (['.php', '.html'] as $viewExt) {
+                if (file_exists($viewPath.$viewExt)) {
+                    if ('.php' !== $viewExt) {
+                        $compiledView = $this->compile($viewPath.$viewExt);
+                        if (false === file_put_contents($compiledViewPath, $compiledView)) {
+                            throw new RuntimeException(
+                                'Unable to put the contents of the file: '.$compiledViewPath.'!'
+                            );
+                        }
+
+                        $viewPath = $compiledViewPath;
+                    } else {
+                        $viewPath = $viewPath.$viewExt;
+                    }
+
+                    $viewFound = true;
+                    break;
+                }
+            }
+
+            if (!$viewFound) {
+                throw new InvalidArgumentException(
+                    'View does not exists: '.$viewName.'!'
+                );
+            }
+        }
+
+        ob_start();
+
+        extract($viewParameters, \EXTR_SKIP);
+        require $viewPath;
+
+        return ob_get_clean();
     }
 
     /**
@@ -113,6 +155,17 @@ class View
         $view = $this->compileViewDirectives($view);
 
         return $view;
+    }
+
+    /**
+     * Normalize view name.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function normalizeName(string $name): string
+    {
+        return str_replace('.', \DIRECTORY_SEPARATOR, $name);
     }
 
     /**

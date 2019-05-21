@@ -90,13 +90,43 @@ class View
             );
         }
 
+        //
+        // Compile all comments.
+        //
+        $view = $this->compileComments($view);
+
+        //
+        // Compile all placeholders.
+        //
         $view = $this->compilePlaceholders($view);
-        $view = $this->compileIfDirectives($view);
-        $view = $this->compileForDirectives($view);
+
+        //
+        // Compile all conditions.
+        //
+        $view = $this->compileIfConditions($view);
+        $view = $this->compileForConditions($view);
+
+        //
+        // Compile all directives.
+        //
         $view = $this->compilePhpDirectives($view);
         $view = $this->compileViewDirectives($view);
 
         return $view;
+    }
+
+    /**
+     * Compile view comments.
+     *
+     * @param string $view
+     * @return string
+     */
+    protected function compileComments(string $view): string
+    {
+        return preg_replace_callback('/\#\#([^#]+)\#\#/', function ($matches) {
+            $data = trim($matches[1]);
+            return "<?php /* {$data} */ ?>";
+        }, $view);
     }
 
     /**
@@ -114,12 +144,12 @@ class View
     }
 
     /**
-     * Compile @if directives.
+     * Compile @if conditions.
      *
      * @param string $view
      * @return string
      */
-    protected function compileIfDirectives(string $view): string
+    protected function compileIfConditions(string $view): string
     {
         $view = preg_replace_callback('/\@if([^\n]+)/', function ($matches) {
             $data = trim($matches[1]);
@@ -131,33 +161,36 @@ class View
             return "<?php } else if ({$data}) { ?>";
         }, $view);
 
-        $view = str_replace('@endif', '<?php } ?>', $view);
         $view = str_replace('@else', '<?php } else { ?>', $view);
+        $view = str_replace('@endif', '<?php } ?>', $view);
 
         return $view;
     }
 
     /**
-     * Compile @for directives.
+     * Compile @for conditions.
      *
      * @param string $view
      * @return string
      */
-    protected function compileForDirectives(string $view): string
+    protected function compileForConditions(string $view): string
     {
         $view = preg_replace_callback('/\@for ([^\s]+) in ([^\n]+)/', function ($matches) {
-            [$value, $values] = [trim($matches[1]), trim($matches[2])];
+            $value = trim($matches[1]);
+            $values = trim($matches[2]);
+
             return "<?php foreach ({$values} as {$value}) { ?>";
         }, $view);
 
-        $view = preg_replace_callback('/\@for ([^\s]+)\, ([^\s]+) in ([^\n]+)/', function ($matches) {
-            [$key, $value, $values] = [trim($matches[1]), trim($matches[2]), trim($matches[3])];
+        $view = preg_replace_callback('/\@for ([^,]+)\, ([^\s]+) in ([^\n]+)/', function ($matches) {
+            $key = trim($matches[1]);
+            $value = trim($matches[2]);
+            $values = trim($matches[3]);
+
             return "<?php foreach ({$values} as {$key} => {$value}) { ?>";
         }, $view);
 
-        $view = str_replace('@endfor', '<?php } ?>', $view);
-
-        return $view;
+        return str_replace('@endfor', '<?php } ?>', $view);
     }
 
     /**
@@ -182,7 +215,7 @@ class View
      */
     protected function compileViewDirectives(string $view): string
     {
-        return preg_replace_callback('/\@view +([\w.]+)/', function ($matches) {
+        return preg_replace_callback('/\@view ([\w.]+)/', function ($matches) {
             $data = $matches[1];
             return "<?php echo \$this->render('{$data}'); ?>";
         }, $view);

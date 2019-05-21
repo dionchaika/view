@@ -1,5 +1,41 @@
-@for $id, $user in $users
+<!doctype html>
+<html lang="{{ $lang }}">
+    <head>
+        <meta charset="utf-8">
+        <title>The PHP View Engine</title>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                @view layouts.header
+            </header>
+            <main>
+                <div class="time">
+                    @php
+                        date_default_timezone_set('UTC');
+                        echo date('d.M.Y H:i:s');
+                    @endphp
+                </div>
+                @if $error
+                    <div class="alert alert-danger">
+                        <p>{{ $errorMessage }}</p>
+                    </div>
+                @elseif $success
+                    <div class="alert alert-success">
+                        <p>{{ $successMessage }}</p>
+                    </div>
+                @endif
 
-{{ $user['name'] }}
-
-@endfor
+                ## User list ##
+                <ul class="users">
+                    @for $user in $users
+                        <li class="user">{{ $user['name'] }}, {{ $user['email'] }}</li>
+                    @endfor
+                </ul>
+            </main>
+            <footer>
+                @view layouts.footer
+            </footer>
+        </div>
+    </body>
+</html>

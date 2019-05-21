@@ -1,3 +1,0 @@
-<div>
-    Example header
-</div>

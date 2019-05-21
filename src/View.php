@@ -88,7 +88,7 @@ class View
                 if (file_exists($viewPath.$viewExt)) {
                     if ('.php' !== $viewExt) {
                         $compiledView = $this->compile($viewPath.$viewExt);
-                        if (false === file_put_contents($compiledViewPath, $compiledView)) {
+                        if (false === @file_put_contents($compiledViewPath, $compiledView)) {
                             throw new RuntimeException(
                                 'Unable to put the contents of the file: '.$compiledViewPath.'!'
                             );

@@ -134,7 +134,8 @@ class View
     protected function compileViewDirectives(string $view): string
     {
         return preg_replace_callback('/\@view +([\w.]+)/', function ($matches) {
-            return "<?php echo \$this->render('{$matches[1]}'); ?>";
+            $data = $matches[1];
+            return "<?php echo \$this->render('{$data}'); ?>";
         }, $view);
     }
 }

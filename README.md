@@ -59,3 +59,15 @@ echo $view->render('home.index', ['lang' => 'en', 'title' => 'Home Page']);
     <div class="email">{{ $user['email'] }}</div>
 </div>
 ```
+
+4. Using conditions:
+```html
+### If condition ###
+<div class="container">
+    @if $error
+        <div class="alert alert-danger">
+            {{ $message }}
+        </div>
+    @endif
+</div>
+```

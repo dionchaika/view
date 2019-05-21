@@ -31,13 +31,16 @@ class View
     protected $compiledViewsDir;
 
     /**
-     * @param string $viewsDir
-     * @param string $compiledViewsDir
+     * @param string      $viewsDir
+     * @param string|null $compiledViewsDir
      */
-    public function __construct(string $viewsDir, string $compiledViewsDir)
+    public function __construct(string $viewsDir, ?string $compiledViewsDir = null)
     {
         $this->viewsDir = rtrim($viewsDir, '/');
-        $this->compiledViewsDir = rtrim($compiledViewsDir, '/');
+
+        $this->compiledViewsDir = (null === $compiledViewsDir)
+            ? $this->viewsDir
+            : rtrim($compiledViewsDir, '/');
     }
 
     /**

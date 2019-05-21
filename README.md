@@ -14,3 +14,14 @@ composer require dionchaika/view:dev-master
 
 require_once 'vendor/autoload.php';
 ```
+
+## Configuration
+```php
+
+use Dionchaika\View\View;
+
+$view = new View(
+    '/path/to/views',
+    '/optional/path/to/compiled/views'
+);
+```

@@ -27,8 +27,14 @@ $view = new View(
 ```
 
 ## Basic usage
+1. Rendering views:
 ```php
 
+//
+// Will render a view file
+// /path/to/views/home/index.php
+// or /path/to/views/home/index.html
+//
 echo $view->render('home.index');
 
 //

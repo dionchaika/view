@@ -92,6 +92,7 @@ class View
 
         $view = $this->compilePlaceholders($view);
         $view = $this->compileIfDirectives($view);
+        $view = $this->compileForDirectives($view);
         $view = $this->compilePhpDirectives($view);
         $view = $this->compileViewDirectives($view);
 
@@ -132,6 +133,29 @@ class View
 
         $view = str_replace('@endif', '<?php } ?>', $view);
         $view = str_replace('@else', '<?php } else { ?>', $view);
+
+        return $view;
+    }
+
+    /**
+     * Compile @for directives.
+     *
+     * @param string $view
+     * @return string
+     */
+    protected function compileForDirectives(string $view): string
+    {
+        $view = preg_replace_callback('/\@for ([^\s]+) in ([^\n]+)/', function ($matches) {
+            [$value, $values] = [trim($matches[1]), trim($matches[2])];
+            return "<?php foreach ({$values} as {$value}) { ?>";
+        }, $view);
+
+        $view = preg_replace_callback('/\@for ([^\s]+)\, ([^\s]+) in ([^\n]+)/', function ($matches) {
+            [$key, $value, $values] = [trim($matches[1]), trim($matches[2]), trim($matches[3])];
+            return "<?php foreach ({$values} as {$key} => {$value}) { ?>";
+        }, $view);
+
+        $view = str_replace('@endfor', '<?php } ?>', $view);
 
         return $view;
     }

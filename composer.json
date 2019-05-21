@@ -1,0 +1,28 @@
+{
+    "name": "dionchaika/view",
+    "description": "The PHP View Engine",
+    "keywords": [
+        "php",
+        "view"
+    ],
+    "homepage": "https://github.com/dionchaika/view",
+    "version": "v1.0.0",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dion Chaika",
+            "email": "dionchaika@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Dionchaika\\View\\": "src/"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.1.3"
+    }
+}

@@ -126,7 +126,7 @@ class View
      * @return string
      * @throws \RuntimeException
      */
-    public function compile(string $viewPath): string
+    protected function compile(string $viewPath): string
     {
         $view = @file_get_contents($viewPath);
         if (false === $view) {

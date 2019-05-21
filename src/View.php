@@ -150,6 +150,8 @@ class View
         //
         $view = $this->compileIfConditions($view);
         $view = $this->compileForConditions($view);
+        $view = $this->compileIssetConditions($view);
+        $view = $this->compileEmptyConditions($view);
 
         //
         // Compile all directives.
@@ -247,6 +249,38 @@ class View
         }, $view);
 
         return str_replace('@endfor', '<?php } ?>', $view);
+    }
+
+    /**
+     * Compile @isset conditions.
+     *
+     * @param string $view
+     * @return string
+     */
+    protected function compileIssetConditions(string $view): string
+    {
+        $view = preg_replace_callback('/\@isset([^\n]+)/', function ($matches) {
+            $data = trim($matches[1]);
+            return "<?php if (isset({$data})) { ?>";
+        }, $view);
+
+        return str_replace('@endisset', '<?php } ?>', $view);
+    }
+
+    /**
+     * Compile @empty conditions.
+     *
+     * @param string $view
+     * @return string
+     */
+    protected function compileEmptyConditions(string $view): string
+    {
+        $view = preg_replace_callback('/\@empty([^\n]+)/', function ($matches) {
+            $data = trim($matches[1]);
+            return "<?php if (empty({$data})) { ?>";
+        }, $view);
+
+        return str_replace('@endempty', '<?php } ?>', $view);
     }
 
     /**

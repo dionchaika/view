@@ -82,7 +82,7 @@ class View
                 continue;
             }
 
-            if (0 === strrpos($dir ,'.compiled.php')) {
+            if (0 === strrpos($dir, '.compiled.php')) {
                 $compiledViewPath  = $this->compiledViewsDir
                     .\DIRECTORY_SEPARATOR
                     .$path;

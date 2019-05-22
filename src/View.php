@@ -63,6 +63,34 @@ class View
         return $this->compiledViewsDir;
     }
 
+    public function clearCache(): void
+    {
+        $dir = scandir($this->compiledViewsDir);
+        if (false === $dir) {
+            throw new RuntimeException(
+                'Unable to open directory: '.$this->compiledViewsDir.'!'
+            );
+        }
+
+        foreach ($dir as $path) {
+            if ('.' === $path || '..' === $path) {
+                continue;
+            }
+
+            if (0 === strrpos($dir ,'.compiled.php')) {
+                $compiledViewPath  = $this->compiledViewsDir
+                    .\DIRECTORY_SEPARATOR
+                    .$path;
+
+                if (false === unlink($compiledViewPath)) {
+                    throw new RuntimeException(
+                        'Unable to delete file: '.$compiledViewPath.'!'
+                    );
+                }
+            }
+        }
+    }
+
     /**
      * Render view into the HTML.
      *
@@ -172,6 +200,8 @@ class View
         //
         $view = $this->compilePhpDirectives($view);
         $view = $this->compileViewDirectives($view);
+        $view = $this->compileStyleDirectives($view);
+        $view = $this->compileScriptDirectives($view);
 
         return $view;
     }
@@ -308,6 +338,34 @@ class View
         return preg_replace_callback('/\@view ([\w.]+)/', function ($matches) {
             $viewName = $matches[1];
             return "<?php echo \$this->render('{$viewName}'); ?>";
+        }, $view);
+    }
+
+    /**
+     * Compile @style directives.
+     *
+     * @param string $view
+     * @return string
+     */
+    protected function compileStyleDirectives(string $view): string
+    {
+        return preg_replace_callback('/\@style ([\w.]+)/', function ($matches) {
+            $viewName = $matches[1];
+            return "<style><?php echo \$this->render('{$viewName}'); ?></style>";
+        }, $view);
+    }
+
+    /**
+     * Compile @script directives.
+     *
+     * @param string $view
+     * @return string
+     */
+    protected function compileScriptDirectives(string $view): string
+    {
+        return preg_replace_callback('/\@script ([\w.]+)/', function ($matches) {
+            $viewName = $matches[1];
+            return "<script><?php echo \$this->render('{$viewName}'); ?></script>";
         }, $view);
     }
 }

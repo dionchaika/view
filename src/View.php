@@ -63,6 +63,11 @@ class View
         return $this->compiledViewsDir;
     }
 
+    /**
+     * Clear all compiled views.
+     *
+     * @return void
+     */
     public function clearCache(): void
     {
         $dir = scandir($this->compiledViewsDir);

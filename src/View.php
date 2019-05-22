@@ -119,32 +119,43 @@ class View
                 .\DIRECTORY_SEPARATOR
                 .$this->normalizeViewName($viewName);
 
-            $viewFound = false;
-            foreach (['.php', '.html'] as $viewExt) {
-                if (file_exists($viewPath.$viewExt)) {
-                    if ('.php' !== $viewExt) {
-                        $compiledView = $this->compile($viewPath.$viewExt);
+            $dir = scandir($this->viewsDir);
+            if (false === $dir) {
+                throw new RuntimeException(
+                    'Unable to open directory: '.$this->viewsDir.'!'
+                );
+            }
+
+            $foundViewPath = null;
+            foreach ($dir as $path) {
+                if (preg_match(
+                    '/^'.$viewPath.'\.(.+)$/',
+                    $this->viewsDir.\DIRECTORY_SEPARATOR.$path
+                )) {
+                    if (0 === strrpos($path, '.php')) {
+                        $foundViewPath = $this->viewsDir.\DIRECTORY_SEPARATOR.$path;
+                    } else {
+                        $compiledView = $this->compile($this->viewsDir.\DIRECTORY_SEPARATOR.$path);
                         if (false === @file_put_contents($compiledViewPath, $compiledView)) {
                             throw new RuntimeException(
                                 'Unable to put the contents of the file: '.$compiledViewPath.'!'
                             );
                         }
 
-                        $viewPath = $compiledViewPath;
-                    } else {
-                        $viewPath = $viewPath.$viewExt;
+                        $foundViewPath = $compiledViewPath;
                     }
 
-                    $viewFound = true;
                     break;
                 }
             }
 
-            if (!$viewFound) {
+            if (null === $foundViewPath) {
                 throw new InvalidArgumentException(
                     'View does not exists: '.$viewName.'!'
                 );
             }
+
+            $viewPath = $foundViewPath;
         }
 
         ob_start();

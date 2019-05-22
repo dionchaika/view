@@ -72,39 +72,6 @@ class View
     }
 
     /**
-     * Clear all compiled views.
-     *
-     * @return void
-     */
-    public function clearCache(): void
-    {
-        $dir = @scandir($this->compiledViewsDir);
-        if (false === $dir) {
-            throw new RuntimeException(
-                'Unable to open directory: '.$this->compiledViewsDir.'!'
-            );
-        }
-
-        foreach ($dir as $path) {
-            if ('.' === $path || '..' === $path) {
-                continue;
-            }
-
-            if (preg_match('/\.compiled\.php$/', $path)) {
-                $compiledViewPath = $this->compiledViewsDir
-                    .\DIRECTORY_SEPARATOR
-                    .$path;
-
-                if (false === @unlink($compiledViewPath)) {
-                    throw new RuntimeException(
-                        'Unable to delete file: '.$compiledViewPath.'!'
-                    );
-                }
-            }
-        }
-    }
-
-    /**
      * Get the array
      * of shared view parameters.
      *
@@ -149,6 +116,39 @@ class View
     {
         $this->parameters[$name] = $value;
         return $this;
+    }
+
+    /**
+     * Clear all compiled views.
+     *
+     * @return void
+     */
+    public function clearCache(): void
+    {
+        $dir = @scandir($this->compiledViewsDir);
+        if (false === $dir) {
+            throw new RuntimeException(
+                'Unable to open directory: '.$this->compiledViewsDir.'!'
+            );
+        }
+
+        foreach ($dir as $path) {
+            if ('.' === $path || '..' === $path) {
+                continue;
+            }
+
+            if (preg_match('/\.compiled\.php$/', $path)) {
+                $compiledViewPath = $this->compiledViewsDir
+                    .\DIRECTORY_SEPARATOR
+                    .$path;
+
+                if (false === @unlink($compiledViewPath)) {
+                    throw new RuntimeException(
+                        'Unable to delete file: '.$compiledViewPath.'!'
+                    );
+                }
+            }
+        }
     }
 
     /**

@@ -282,10 +282,12 @@ class View
      */
     protected function compilePlaceholders(string $view): string
     {
-        return preg_replace_callback('/\{\{([^}]+)\}\}/', function ($matches) {
-            $data = trim($matches[1]);
+        $view = preg_replace_callback('/(?<!@)\{\{([^}]+)\}\}/', function ($matches) {
+            $data = trim($matches[2]);
             return "<?php echo {$data}; ?>";
         }, $view);
+
+        return preg_replace('@{{', '{{', $view);
     }
 
     /**

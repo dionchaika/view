@@ -129,7 +129,7 @@ class View
             $foundViewPath = null;
             foreach ($dir as $path) {
                 if (preg_match(
-                    '/^'.preg_quote($viewPath).'\..+$/',
+                    '/^'.preg_quote($viewPath).'\./',
                     $this->viewsDir.\DIRECTORY_SEPARATOR.$path
                 )) {
                     if (0 === strrpos($path, '.php')) {

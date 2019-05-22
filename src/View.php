@@ -222,10 +222,7 @@ class View
             return "<?php } else if ({$condition}) { ?>";
         }, $view);
 
-        $view = str_replace('@else', '<?php } else { ?>', $view);
-        $view = str_replace('@endif', '<?php } ?>', $view);
-
-        return $view;
+        return str_replace(['@else', '@endif'], ['<?php } else { ?>', '<?php } ?>'], $view);
     }
 
     /**
@@ -251,7 +248,7 @@ class View
             return "<?php foreach ({$values} as {$key} => {$value}) { ?>";
         }, $view);
 
-        return str_replace('@endfor', '<?php } ?>', $view);
+        return str_replace(['@break', '@continue', '@endfor'], ['break;', 'continue;', '<?php } ?>'], $view);
     }
 
     /**

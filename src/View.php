@@ -123,6 +123,17 @@ class View
     }
 
     /**
+     * Normalize a view name.
+     *
+     * @param string $viewName
+     * @return string
+     */
+    protected function normalizeViewName(string $viewName): string
+    {
+        return str_replace('.', \DIRECTORY_SEPARATOR, $viewName);
+    }
+
+    /**
      * Compile view into the PHP.
      *
      * @param string $viewPath
@@ -163,17 +174,6 @@ class View
         $view = $this->compileViewDirectives($view);
 
         return $view;
-    }
-
-    /**
-     * Normalize a view name.
-     *
-     * @param string $viewName
-     * @return string
-     */
-    protected function normalizeViewName(string $viewName): string
-    {
-        return str_replace('.', \DIRECTORY_SEPARATOR, $viewName);
     }
 
     /**

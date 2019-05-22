@@ -79,5 +79,15 @@ echo $view->render('home.index', ['lang' => 'en', 'title' => 'Home Page']);
             You are not logged in!
         </div>
     @endif
+
+    @if 404 === $status
+        <div class="alert alert-danger">
+            Page not found!
+        </div>
+    @elseif 500 === $status
+        <div class="alert alert-danger">
+            Internal server error!
+        </div>
+    @endif
 </div>
 ```

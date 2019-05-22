@@ -47,8 +47,8 @@ echo $view->render('home.index', ['lang' => 'en', 'title' => 'Home Page']);
 
 2. Using comments:
 ```html
-### This comment
-    will not be rendered into the HTML ###
+## This comment
+    will not be rendered into the HTML ##
 <h1>Welcome!</h1>
 ```
 
@@ -62,11 +62,21 @@ echo $view->render('home.index', ['lang' => 'en', 'title' => 'Home Page']);
 
 4. Using conditions:
 ```html
-### If condition ###
+## If condition ##
 <div class="container">
     @if $error
         <div class="alert alert-danger">
             {{ $message }}
+        </div>
+    @endif
+
+    @if $auth
+        <div class="alert alert-success">
+            You are logged in!
+        </div>
+    @else
+        <div class="alert alert-danger">
+            You are not logged in!
         </div>
     @endif
 </div>

@@ -185,8 +185,8 @@ class View
     protected function compileComments(string $view): string
     {
         return preg_replace_callback('/\#\#([^#]+)\#\#/', function ($matches) {
-            $data = trim($matches[1]);
-            return "<?php /* {$data} */ ?>";
+            $comment = trim($matches[1]);
+            return "<?php /* {$comment} */ ?>";
         }, $view);
     }
 
@@ -213,13 +213,13 @@ class View
     protected function compileIfConditions(string $view): string
     {
         $view = preg_replace_callback('/\@if([^\n]+)/', function ($matches) {
-            $data = trim($matches[1]);
-            return "<?php if ({$data}) { ?>";
+            $condition = trim($matches[1]);
+            return "<?php if ({$condition}) { ?>";
         }, $view);
 
         $view = preg_replace_callback('/\@elseif([^\n]+)/', function ($matches) {
-            $data = trim($matches[1]);
-            return "<?php } else if ({$data}) { ?>";
+            $condition = trim($matches[1]);
+            return "<?php } else if ({$condition}) { ?>";
         }, $view);
 
         $view = str_replace('@else', '<?php } else { ?>', $view);
@@ -295,8 +295,8 @@ class View
     protected function compilePhpDirectives(string $view): string
     {
         return preg_replace_callback('/\@php([^@]+)\@endphp/', function ($matches) {
-            $data = trim($matches[1]);
-            return "<?php {$data} ?>";
+            $php = trim($matches[1]);
+            return "<?php {$php} ?>";
         }, $view);
     }
 
@@ -309,8 +309,8 @@ class View
     protected function compileViewDirectives(string $view): string
     {
         return preg_replace_callback('/\@view ([\w.]+)/', function ($matches) {
-            $data = $matches[1];
-            return "<?php echo \$this->render('{$data}'); ?>";
+            $viewName = $matches[1];
+            return "<?php echo \$this->render('{$viewName}'); ?>";
         }, $view);
     }
 }

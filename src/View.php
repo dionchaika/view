@@ -31,6 +31,14 @@ class View
     protected $compiledViewsDir;
 
     /**
+     * The array
+     * of shared view parameters.
+     *
+     * @var mixed[]
+     */
+    protected $parameters = [];
+
+    /**
      * @param string      $viewsDir
      * @param string|null $compiledViewsDir
      */
@@ -70,7 +78,7 @@ class View
      */
     public function clearCache(): void
     {
-        $dir = scandir($this->compiledViewsDir);
+        $dir = @scandir($this->compiledViewsDir);
         if (false === $dir) {
             throw new RuntimeException(
                 'Unable to open directory: '.$this->compiledViewsDir.'!'
@@ -82,18 +90,65 @@ class View
                 continue;
             }
 
-            if (0 === strrpos($dir, '.compiled.php')) {
-                $compiledViewPath  = $this->compiledViewsDir
+            if (preg_match('/\.compiled\.php$/', $path)) {
+                $compiledViewPath = $this->compiledViewsDir
                     .\DIRECTORY_SEPARATOR
                     .$path;
 
-                if (false === unlink($compiledViewPath)) {
+                if (false === @unlink($compiledViewPath)) {
                     throw new RuntimeException(
                         'Unable to delete file: '.$compiledViewPath.'!'
                     );
                 }
             }
         }
+    }
+
+    /**
+     * Get the array
+     * of shared view parameters.
+     *
+     * @return mixed[]
+     */
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * Check is the view
+     * shared parameter exists.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasParameter(string $name): bool
+    {
+        return isset($this->parameters[$name]);
+    }
+
+    /**
+     * Get the view shared parameter.
+     *
+     * @param string $name
+     * @return mixed|null
+     */
+    public function getParameter(string $name)
+    {
+        return $this->hasParameter($name) ? $this->parameters[$name] : null;
+    }
+
+    /**
+     * Set a view shared parameter.
+     *
+     * @param string $name
+     * @param mixed  $value
+     * @return self
+     */
+    public function setParameter(string $name, $value): self
+    {
+        $this->parameters[$name] = $value;
+        return $this;
     }
 
     /**
@@ -119,48 +174,31 @@ class View
                 .\DIRECTORY_SEPARATOR
                 .$this->normalizeViewName($viewName);
 
-            $dir = scandir($this->viewsDir);
-            if (false === $dir) {
-                throw new RuntimeException(
-                    'Unable to open directory: '.$this->viewsDir.'!'
-                );
-            }
-
-            $foundViewPath = null;
-            foreach ($dir as $path) {
-                if (preg_match(
-                    '/^'.preg_quote($viewPath).'\./',
-                    $this->viewsDir.\DIRECTORY_SEPARATOR.$path
-                )) {
-                    if (0 === strrpos($path, '.php')) {
-                        $foundViewPath = $this->viewsDir.\DIRECTORY_SEPARATOR.$path;
-                    } else {
-                        $compiledView = $this->compile($this->viewsDir.\DIRECTORY_SEPARATOR.$path);
-                        if (false === @file_put_contents($compiledViewPath, $compiledView)) {
-                            throw new RuntimeException(
-                                'Unable to put the contents of the file: '.$compiledViewPath.'!'
-                            );
-                        }
-
-                        $foundViewPath = $compiledViewPath;
-                    }
-
-                    break;
-                }
-            }
-
-            if (null === $foundViewPath) {
+            $foundViewPaths = @glob($viewPath.'.*');
+            if (false === $foundViewPaths || empty($foundViewPaths)) {
                 throw new InvalidArgumentException(
                     'View does not exists: '.$viewName.'!'
                 );
             }
 
-            $viewPath = $foundViewPath;
+            $viewPath = array_shift($foundViewPaths);
+            if (preg_match('/\.view\..+$/', $viewPath)) {
+                $compiledView = $this->compile($viewPath);
+                if (false === @file_put_contents($compiledViewPath, $compiledView)) {
+                    throw new RuntimeException(
+                        'Unable to put the contents of the file: '.$compiledViewPath.'!'
+                    );
+                }
+
+                $viewPath = $compiledViewPath;
+            }
         }
 
         ob_start();
 
+        extract($this->parameters);
         extract($viewParameters, \EXTR_SKIP);
+
         require $viewPath;
 
         return ob_get_clean();
